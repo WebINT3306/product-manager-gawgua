@@ -17,48 +17,6 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>1</td>
-					<td>May giat</td>
-					<td>Dien gia dung</td>
-					<td>8500000</td>
-					<td>5</td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>Dieu hoa</td>
-					<td>Dien gia dung</td>
-					<td>12000000</td>
-					<td>3</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>Tu lanh</td>
-					<td>Dien gia dung</td>
-					<td>9000000</td>
-					<td>7</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>Laptop</td>
-					<td>Dien tu</td>
-					<td>15000000</td>
-					<td>10</td>
-				</tr>
-				<tr>
-					<td>5</td>
-					<td>Dien thoai</td>
-					<td>Dien tu</td>
-					<td>7500000</td>
-					<td>15</td>
-				</tr>
-				<tr>
-					<td>6</td>
-					<td>May tinh bang</td>
-					<td>Dien tu</td>
-					<td>6000000</td>
-					<td>8</td>
-				</tr>
 			</tbody>
 		</table>
 
@@ -71,97 +29,89 @@
 		</form>
 
 		<script>
-			// AJAX get products.json
-			const xhr = new XMLHttpRequest();
+			function getTbody() {
+				return document.querySelector("tbody");
+			}
+
+			function getCellText(tr, index) {
+				var cells = tr.querySelectorAll("td");
+				return cells[index] ? cells[index].textContent : "";
+			}
+
+			function addRowToTable(id, name, category, price, quantity) {
+				var tr = document.createElement("tr");
+				var idTd = document.createElement("td");
+				idTd.textContent = id;
+				var nameTd = document.createElement("td");
+				nameTd.textContent = name;
+				var categoryTd = document.createElement("td");
+				categoryTd.textContent = category || "";
+				var priceTd = document.createElement("td");
+				priceTd.textContent = price;
+				var quantityTd = document.createElement("td");
+				quantityTd.textContent = quantity;
+
+				tr.appendChild(idTd);
+				tr.appendChild(nameTd);
+				tr.appendChild(categoryTd);
+				tr.appendChild(priceTd);
+				tr.appendChild(quantityTd);
+
+				getTbody().appendChild(tr);
+			}
+
+			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function () {
-				if (xhr.status === 200 && xhr.readyState === 4) {
-					const products = JSON.parse(xhr.responseText);
-					document.querySelector("tbody").innerHTML = ""; // Clear existing rows
-					products.forEach((element) => {
-						let tr = document.createElement("tr");
-						let id = document.createElement("td");
-						id.textContent = element.id;
-						let name = document.createElement("td");
-						name.textContent = element.name;
-						let category = document.createElement("td");
-						category.textContent = element.category;
-						let price = document.createElement("td");
-						price.textContent = element.price;
-						let quantity = document.createElement("td");
-						quantity.textContent = element.quantity;
-
-						tr.appendChild(id);
-						tr.appendChild(name);
-						tr.appendChild(category);
-						tr.appendChild(price);
-						tr.appendChild(quantity);
-
-						document.querySelector("tbody").appendChild(tr);
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					var products = JSON.parse(xhr.responseText);
+					getTbody().innerHTML = "";
+					products.forEach(function (element) {
+						addRowToTable(element.id, element.name, element.category, element.price, element.quantity);
 					});
-				} else {
-					console.error("Failed to load products.json");
 				}
 			};
 			xhr.open("GET", "products.json");
 			xhr.send();
 
-			let ascending_name_order = true;
-			const nameHeader = document.getElementById("name");
-			nameHeader.onclick = () => {
+			var ascending_name_order = true;
+			var nameHeader = document.getElementById("name");
+			nameHeader.addEventListener("click", function () {
 				ascending_name_order = !ascending_name_order;
-				let rows = Array.from(document.querySelectorAll("tbody tr"));
-				rows.forEach((tr) => tr.parentNode.removeChild(tr));
-				rows.sort((a, b) => {
-					const nameA = a.children[1].textContent.toLowerCase();
-					const nameB = b.children[1].textContent.toLowerCase();
+				var tbody = getTbody();
+				var rows = Array.from(document.querySelectorAll("tbody tr"));
+				rows.sort(function (a, b) {
+					var nameA = getCellText(a, 1).toLowerCase();
+					var nameB = getCellText(b, 1).toLowerCase();
 					if (nameA < nameB) return ascending_name_order ? -1 : 1;
 					if (nameA > nameB) return ascending_name_order ? 1 : -1;
 					return 0;
 				});
+				rows.forEach(function (tr) { tbody.removeChild(tr); });
+				rows.forEach(function (tr) { tbody.appendChild(tr); });
+			});
 
-				rows.forEach((tr) =>
-					document.querySelector("tbody").appendChild(tr),
-				);
-			};
-
-			const form = document.getElementById("add-product-form");
-			form.onsubmit = () => {
-				const name = document.getElementById("input-name").value;
-				const category =
-					document.getElementById("input-category").value;
-				const price = document.getElementById("input-price").value;
-				const quantity =
-					document.getElementById("input-quantity").value;
+			function handleAddProduct(e) {
+				if (e && e.preventDefault) e.preventDefault();
+				var name = document.getElementById("input-name").value;
+				var category = document.getElementById("input-category").value;
+				var price = document.getElementById("input-price").value;
+				var quantity = document.getElementById("input-quantity").value;
 
 				if (name && price && quantity) {
-					let tr = document.createElement("tr");
-					let id = document.createElement("td");
-					id.textContent =
-						document.querySelectorAll("tbody tr").length + 1;
-					let nameTd = document.createElement("td");
-					nameTd.textContent = name;
-					let categoryTd = document.createElement("td");
-					categoryTd.textContent = category ?? "";
-					let priceTd = document.createElement("td");
-					priceTd.textContent = price;
-					let quantityTd = document.createElement("td");
-					quantityTd.textContent = quantity;
-
-					tr.appendChild(id);
-					tr.appendChild(nameTd);
-					tr.appendChild(categoryTd);
-					tr.appendChild(priceTd);
-					tr.appendChild(quantityTd);
-
-					document.querySelector("tbody").appendChild(tr);
-
-					form.reset();
+					var id = document.querySelectorAll("tbody tr").length + 1;
+					addRowToTable(id, name, category, price, quantity);
+					document.getElementById("input-name").value = "";
+					document.getElementById("input-category").value = "";
+					document.getElementById("input-price").value = "";
+					document.getElementById("input-quantity").value = "";
 				} else {
 					alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
 				}
+				return false;
+			}
 
-				return false; // Prevent reload
-			};
+			document.getElementById("btn-add").addEventListener("click", handleAddProduct);
+			document.getElementById("add-product-form").addEventListener("submit", handleAddProduct);
 		</script>
 	</body>
 </html>
