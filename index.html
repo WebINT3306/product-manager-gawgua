@@ -1,11 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Sản phẩm</title>
-</head>
-<body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Quản lý Sản phẩm</title>
+	</head>
+	<body>
+		<table id="product-table">
+			<thead>
+				<tr>
+					<th>STT</th>
+					<th>Tên sản phẩm</th>
+					<th>Danh mục</th>
+					<th>Đơn giá</th>
+					<th>Số lượng</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
 
-</body>
+		<form id="add-product-form">
+			<input id="input-name" placeholder="Tên"/>
+			<input id="input-category" placeholder="Danh mục"/>
+			<input id="input-price" placeholder="Đơn giá"/>
+			<input id="input-quantity" placeholder="Số lượng"/>
+			<button id="btn-add" type="submit">Thêm</button>
+		</form>
+
+		<script>
+			// AJAX get products.json
+			const xhr = new XMLHttpRequest();
+			xhr.onload = function () {
+				if (xhr.status === 200) {
+					const products = JSON.parse(xhr.responseText);	
+
+					products.forEach((element) => {
+						let tr = document.createElement("tr");
+						let id = document.createElement("td");
+						id.textContent = element.id;
+						let name = document.createElement("td");
+						name.textContent = element.name;
+						let category = document.createElement("td");
+						category.textContent = element.category;
+						let price = document.createElement("td");
+						price.textContent = element.price;
+						let quantity = document.createElement("td");
+						quantity.textContent = element.quantity;
+
+						tr.appendChild(id);
+						tr.appendChild(name);
+						tr.appendChild(category);
+						tr.appendChild(price);
+						tr.appendChild(quantity);
+
+						document.querySelector("tbody").appendChild(tr);
+					});
+				} else {
+					console.error("Failed to load products.json");
+				}
+			};
+			xhr.open("GET", "products.json");
+			xhr.send();
+
+			const form = document.getElementById("add-product-form");
+			form.onsubmit = () => {
+				const name = document.getElementById("input-name").value;
+				const category = document.getElementById("input-category").value;
+				const price = document.getElementById("input-price").value;
+				const quantity = document.getElementById("input-quantity").value;
+
+				if (name && price && quantity) {
+					let tr = document.createElement("tr");
+					let id = document.createElement("td");
+					id.textContent = document.querySelectorAll("tbody tr").length + 1;
+					let nameTd = document.createElement("td");
+					nameTd.textContent = name;
+					let categoryTd = document.createElement("td");
+					categoryTd.textContent = category ?? "";
+					let priceTd = document.createElement("td");
+					priceTd.textContent = price;
+					let quantityTd = document.createElement("td");
+					quantityTd.textContent = quantity;
+
+					tr.appendChild(id);
+					tr.appendChild(nameTd);
+					tr.appendChild(categoryTd);
+					tr.appendChild(priceTd);
+					tr.appendChild(quantityTd);
+
+					document.querySelector("tbody").appendChild(tr);
+
+					form.reset();
+				} else {
+					alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
+				}
+
+				return false; // Prevent reload
+			};
+		</script>
+	</body>
 </html>
