@@ -10,7 +10,7 @@
 			<thead>
 				<tr>
 					<th>STT</th>
-					<th>Tên sản phẩm</th>
+					<th id="name">Tên sản phẩm</th>
 					<th>Danh mục</th>
 					<th>Đơn giá</th>
 					<th>Số lượng</th>
@@ -20,10 +20,10 @@
 		</table>
 
 		<form id="add-product-form">
-			<input id="input-name" placeholder="Tên"/>
-			<input id="input-category" placeholder="Danh mục"/>
-			<input id="input-price" placeholder="Đơn giá"/>
-			<input id="input-quantity" placeholder="Số lượng"/>
+			<input id="input-name" placeholder="Tên" />
+			<input id="input-category" placeholder="Danh mục" />
+			<input id="input-price" placeholder="Đơn giá" />
+			<input id="input-quantity" placeholder="Số lượng" />
 			<button id="btn-add" type="submit">Thêm</button>
 		</form>
 
@@ -32,7 +32,7 @@
 			const xhr = new XMLHttpRequest();
 			xhr.onload = function () {
 				if (xhr.status === 200) {
-					const products = JSON.parse(xhr.responseText);	
+					const products = JSON.parse(xhr.responseText);
 
 					products.forEach((element) => {
 						let tr = document.createElement("tr");
@@ -62,17 +62,37 @@
 			xhr.open("GET", "products.json");
 			xhr.send();
 
+			let ascending_name_order = true;
+			const nameHeader = document.getElementById("name");
+			nameHeader.onclick = () => {
+				ascending_name_order = !ascending_name_order;
+				let rows = Array.from(document.querySelectorAll("tbody tr"));
+				rows.forEach((tr) => tr.parentNode.removeChild(tr));
+				rows.sort((a, b) => {
+					const nameA = a.children[1].textContent.toLowerCase();
+					const nameB = b.children[1].textContent.toLowerCase();
+					if (nameA < nameB) return ascending_name_order ? -1 : 1;
+					if (nameA > nameB) return ascending_name_order ? 1 : -1;
+					return 0;
+				});
+
+				rows.forEach((tr) => document.querySelector("tbody").appendChild(tr));
+			};
+
 			const form = document.getElementById("add-product-form");
 			form.onsubmit = () => {
 				const name = document.getElementById("input-name").value;
-				const category = document.getElementById("input-category").value;
+				const category =
+					document.getElementById("input-category").value;
 				const price = document.getElementById("input-price").value;
-				const quantity = document.getElementById("input-quantity").value;
+				const quantity =
+					document.getElementById("input-quantity").value;
 
 				if (name && price && quantity) {
 					let tr = document.createElement("tr");
 					let id = document.createElement("td");
-					id.textContent = document.querySelectorAll("tbody tr").length + 1;
+					id.textContent =
+						document.querySelectorAll("tbody tr").length + 1;
 					let nameTd = document.createElement("td");
 					nameTd.textContent = name;
 					let categoryTd = document.createElement("td");
