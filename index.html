@@ -16,7 +16,50 @@
 					<th>Số lượng</th>
 				</tr>
 			</thead>
-			<tbody></tbody>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>May giat</td>
+					<td>Dien gia dung</td>
+					<td>8500000</td>
+					<td>5</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>Dieu hoa</td>
+					<td>Dien gia dung</td>
+					<td>12000000</td>
+					<td>3</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>Tu lanh</td>
+					<td>Dien gia dung</td>
+					<td>9000000</td>
+					<td>7</td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>Laptop</td>
+					<td>Dien tu</td>
+					<td>15000000</td>
+					<td>10</td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td>Dien thoai</td>
+					<td>Dien tu</td>
+					<td>7500000</td>
+					<td>15</td>
+				</tr>
+				<tr>
+					<td>6</td>
+					<td>May tinh bang</td>
+					<td>Dien tu</td>
+					<td>6000000</td>
+					<td>8</td>
+				</tr>
+			</tbody>
 		</table>
 
 		<form id="add-product-form">
@@ -33,7 +76,7 @@
 			xhr.onload = function () {
 				if (xhr.status === 200 && xhr.readyState === 4) {
 					const products = JSON.parse(xhr.responseText);
-
+					document.querySelector("tbody").innerHTML = ""; // Clear existing rows
 					products.forEach((element) => {
 						let tr = document.createElement("tr");
 						let id = document.createElement("td");
@@ -76,7 +119,9 @@
 					return 0;
 				});
 
-				rows.forEach((tr) => document.querySelector("tbody").appendChild(tr));
+				rows.forEach((tr) =>
+					document.querySelector("tbody").appendChild(tr),
+				);
 			};
 
 			const form = document.getElementById("add-product-form");
