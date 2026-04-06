@@ -73,7 +73,7 @@
 		<script>
 			// AJAX get products.json
 			const xhr = new XMLHttpRequest();
-			xhr.onload = function () {
+			xhr.onreadystatechange = function () {
 				if (xhr.status === 200 && xhr.readyState === 4) {
 					const products = JSON.parse(xhr.responseText);
 					document.querySelector("tbody").innerHTML = ""; // Clear existing rows
